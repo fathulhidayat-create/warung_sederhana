@@ -147,12 +147,9 @@ def pembayaran():
         print("Produk tidak ditemukan!")
         return
 
-    stok = data [0]
-    harga = data [1]
+    harga, stok = data   # <- sudah benar
 
-    
-
-    if stok < jumlah :
+    if stok < jumlah:
         print("Stok tidak mencukupi!")
         return
 
@@ -166,21 +163,21 @@ def pembayaran():
         """, (jumlah, code))
 
         cursor.execute("""
-            INSERT INTO penjualan (code_produk, jumlah, total_harga)
-            VALUES (%s, %s, %s)
-        """, (code, jumlah, total))
+            INSERT INTO penjualan (code_produk, jumlah, harga_satuan, total_harga)
+            VALUES (%s, %s, %s, %s)
+        """, (code, jumlah, harga, total))
 
         db.commit()
 
-        print(f'''
+        print(f"""
 Pembayaran berhasil!
 Total bayar: {total}
 Stok berhasil diupdate!
-''')
+""")
 
-    except:
+    except Exception as e:
         db.rollback()
-        print("Terjadi kesalahan saat transaksi!")
+        print("Terjadi kesalahan saat transaksi!", e)
 
 
 
