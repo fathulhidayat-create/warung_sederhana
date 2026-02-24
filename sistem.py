@@ -3,8 +3,9 @@ from database import data_produk
 from database import delete_produk
 from database import change_data
 from database import temukan_produk
-from database import pembayaran
+from database import transaksi
 import sys
+from database import pendapatan
 
 
 
@@ -24,6 +25,9 @@ def produk_information():
     code = input ("masukan nama produk: ")
     
     data = temukan_produk(code)
+
+def keuangan():
+    pendapatan()
     
 
 
@@ -31,7 +35,7 @@ def menu():
     while True:
         print ('=============== WARUNG MADURA =================')
         try:
-            pilihan = int(input ('\n\n1. produk\n2. delete produk\n3. tambah produk\n4. ubah data produk\n5. cari produk\n6. transaksi\n7. keluar program \n\npilih menu: '))
+            pilihan = int(input ('\n\n1. produk\n2. delete produk\n3. tambah produk\n4. ubah data produk\n5. cari produk\n6. transaksi\n7. pendapatan\n8. keluar program \n\npilih menu: '))
         except ValueError:
             print("Input harus angka!")
             continue
@@ -46,7 +50,9 @@ def menu():
         elif pilihan == 5:
             produk_information()
         elif pilihan == 6:
-            pembayaran()
+            transaksi()
+        elif pilihan == 7:
+            keuangan()
         elif pilihan == 7:
             sys.exit()
         else :

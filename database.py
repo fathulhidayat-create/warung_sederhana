@@ -129,7 +129,7 @@ stok: {data[3]}''')
 
 
 
-def pembayaran():
+def transaksi():
     cursor = db.cursor()
 
     code = input("Masukan code produk: ")
@@ -147,7 +147,7 @@ def pembayaran():
         print("Produk tidak ditemukan!")
         return
 
-    harga, stok = data   # <- sudah benar
+    harga, stok = data   
 
     if stok < jumlah:
         print("Stok tidak mencukupi!")
@@ -170,17 +170,81 @@ def pembayaran():
         db.commit()
 
         print(f"""
+Total bayar: {total}""")
+        while True:
+            bayar = int(input ("masukan nominal uang: "))
+            if bayar < harga:
+                print ("uang anda kurang, masukan nominal kembali!")
+            else:
+                break
+
+        if bayar > harga:
+                print ("kembalian anda: ", bayar - (harga * jumlah))
+                print (f"""
 Pembayaran berhasil!
-Total bayar: {total}
 Stok berhasil diupdate!
 """)
+        else:
+            print (f"""
+Pembayaran berhasil!
+Stok berhasil diupdate!
+""")
+
+
+            
 
     except Exception as e:
         db.rollback()
         print("Terjadi kesalahan saat transaksi!", e)
 
 
+def pendapatan():
+    cursor = db.cursor()
 
+    print("""
+=== MENU PENDAPATAN ===
+1. Pendapatan Hari Ini
+2. Pendapatan Bulan Ini
+3. Total Pendapatan
+4. Jumlah Transaksi Hari Ini
+""")
 
+    pilih = input("Pilih menu: ")
+
+    if pilih == "1":
+        cursor.execute("""
+            SELECT SUM(total_harga)
+            FROM penjualan
+            WHERE DATE(tanggal) = CURDATE()
+        """)
+        hasil = cursor.fetchone()
+        print(f"Pendapatan hari ini: {hasil[0] or 0}")
+
+    elif pilih == "2":
+        cursor.execute("""
+            SELECT SUM(total_harga)
+            FROM penjualan
+            WHERE MONTH(tanggal) = MONTH(CURDATE())
+            AND YEAR(tanggal) = YEAR(CURDATE())
+        """)
+        hasil = cursor.fetchone()
+        print(f"Pendapatan bulan ini: {hasil[0] or 0}")
+
+    elif pilih == "3":
+        cursor.execute("""
+            SELECT SUM(total_harga)
+            FROM penjualan
+        """)
+        hasil = cursor.fetchone()
+        print(f"Total pendapatan: {hasil[0] or 0}")
+
+    elif pilih == "4":
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM penjualan
+            WHERE DATE(tanggal) = CURDATE()
+        """)
+        hasil = cursor.fetchone()
+        print(f"Jumlah transaksi hari ini: {hasil[0]}")
 
         
